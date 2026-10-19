@@ -1,0 +1,3128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="TECHNOVA — Interactive 3D Computer Parts Learning Museum">
+<title>TECHNOVA</title>
+
+<style>
+/* =========================================================
+   TECHNOVA
+   SINGLE-FILE COMPUTER LEARNING WEBSITE
+   HTML5 + CSS3 + ECMAScript
+   ========================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+:root{
+    --bg:#05070b;
+    --bg2:#080d15;
+    --panel:rgba(10,17,28,.82);
+    --panel2:rgba(14,24,38,.92);
+    --line:rgba(94,190,255,.18);
+    --cyan:#4de7ff;
+    --blue:#438cff;
+    --purple:#9c6cff;
+    --green:#42f5a7;
+    --orange:#ffae4a;
+    --red:#ff5d78;
+    --text:#edf8ff;
+    --muted:#91a7ba;
+    --shadow:0 0 40px rgba(0,200,255,.08);
+}
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    background:
+        radial-gradient(circle at 20% 10%,rgba(47,117,255,.13),transparent 30%),
+        radial-gradient(circle at 80% 20%,rgba(0,229,255,.08),transparent 25%),
+        var(--bg);
+    color:var(--text);
+    font-family:Inter,Arial,sans-serif;
+    min-height:100vh;
+    overflow-x:hidden;
+}
+
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    opacity:.08;
+    background-image:
+        linear-gradient(rgba(255,255,255,.08) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(255,255,255,.08) 1px,transparent 1px);
+    background-size:60px 60px;
+    mask-image:linear-gradient(to bottom,black,transparent);
+}
+
+button,
+input{
+    font:inherit;
+}
+
+button{
+    cursor:pointer;
+}
+
+/* =========================
+   HEADER
+   ========================= */
+
+header{
+    position:fixed;
+    z-index:1000;
+    top:0;
+    left:0;
+    right:0;
+    height:72px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 5%;
+    background:rgba(3,7,12,.76);
+    backdrop-filter:blur(20px);
+    border-bottom:1px solid var(--line);
+}
+
+.logo{
+    font-family:Orbitron,sans-serif;
+    font-size:19px;
+    font-weight:800;
+    letter-spacing:3px;
+    color:white;
+}
+
+.logo span{
+    color:var(--cyan);
+}
+
+nav{
+    display:flex;
+    gap:25px;
+}
+
+nav a{
+    color:#9bb0c1;
+    text-decoration:none;
+    font-size:13px;
+    transition:.25s;
+}
+
+nav a:hover{
+    color:var(--cyan);
+}
+
+.header-status{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:11px;
+    color:var(--green);
+}
+
+.status-dot{
+    width:7px;
+    height:7px;
+    background:var(--green);
+    border-radius:50%;
+    box-shadow:0 0 12px var(--green);
+    animation:pulse 1.5s infinite;
+}
+
+@keyframes pulse{
+    50%{opacity:.35;transform:scale(.7)}
+}
+
+/* =========================
+   HERO
+   ========================= */
+
+.hero{
+    min-height:100vh;
+    padding:130px 5% 70px;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    align-items:center;
+    gap:30px;
+    position:relative;
+}
+
+.hero-content{
+    position:relative;
+    z-index:2;
+}
+
+.eyebrow{
+    color:var(--cyan);
+    font-family:Orbitron,sans-serif;
+    font-size:11px;
+    letter-spacing:4px;
+    margin-bottom:20px;
+}
+
+.hero h1{
+    font-family:Orbitron,sans-serif;
+    font-size:clamp(38px,6vw,82px);
+    line-height:.98;
+    letter-spacing:-3px;
+    margin-bottom:25px;
+}
+
+.hero h1 span{
+    color:transparent;
+    -webkit-text-stroke:1px var(--cyan);
+    text-shadow:0 0 30px rgba(77,231,255,.2);
+}
+
+.hero p{
+    max-width:620px;
+    color:var(--muted);
+    line-height:1.8;
+    font-size:16px;
+}
+
+.hero-actions{
+    display:flex;
+    flex-wrap:wrap;
+    gap:12px;
+    margin-top:30px;
+}
+
+.btn{
+    border:1px solid var(--line);
+    background:rgba(15,30,45,.8);
+    color:white;
+    padding:13px 19px;
+    border-radius:8px;
+    transition:.25s;
+}
+
+.btn:hover{
+    border-color:var(--cyan);
+    box-shadow:0 0 25px rgba(77,231,255,.12);
+    transform:translateY(-2px);
+}
+
+.btn-primary{
+    background:linear-gradient(100deg,#1678ff,#00c6e8);
+    border:0;
+    color:white;
+    font-weight:700;
+}
+
+/* =========================
+   3D COMPUTER
+   ========================= */
+
+.scene{
+    height:570px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    perspective:1100px;
+}
+
+.pc{
+    width:320px;
+    height:500px;
+    position:relative;
+    transform-style:preserve-3d;
+    transform:rotateY(-23deg) rotateX(8deg);
+    animation:pcFloat 5s ease-in-out infinite;
+}
+
+@keyframes pcFloat{
+    50%{transform:rotateY(-18deg) rotateX(4deg) translateY(-15px)}
+}
+
+.case{
+    position:absolute;
+    inset:0;
+    border:2px solid rgba(77,231,255,.4);
+    background:linear-gradient(145deg,#111b28,#050a11);
+    border-radius:15px;
+    box-shadow:
+        0 0 50px rgba(0,180,255,.14),
+        inset 0 0 40px rgba(0,180,255,.04);
+    overflow:hidden;
+}
+
+.case::before{
+    content:"";
+    position:absolute;
+    width:3px;
+    height:100%;
+    left:20px;
+    background:linear-gradient(transparent,var(--cyan),transparent);
+    opacity:.35;
+}
+
+.glass{
+    position:absolute;
+    inset:15px;
+    border:1px solid rgba(255,255,255,.08);
+    background:rgba(50,100,130,.035);
+    border-radius:9px;
+}
+
+.component{
+    position:absolute;
+    border:1px solid rgba(77,231,255,.35);
+    background:linear-gradient(135deg,#102233,#08111c);
+    box-shadow:0 0 15px rgba(77,231,255,.07);
+    transition:.3s;
+}
+
+.component:hover{
+    border-color:var(--cyan);
+    box-shadow:0 0 30px rgba(77,231,255,.3);
+    filter:brightness(1.4);
+}
+
+.mobo{
+    width:190px;
+    height:290px;
+    left:45px;
+    top:85px;
+    border-radius:8px;
+}
+
+.mobo-lines{
+    position:absolute;
+    inset:10px;
+    background:
+        linear-gradient(90deg,transparent 48%,rgba(77,231,255,.15) 49%,transparent 50%),
+        linear-gradient(0deg,transparent 48%,rgba(77,231,255,.12) 49%,transparent 50%);
+    background-size:35px 35px;
+}
+
+.cpu-chip{
+    width:55px;
+    height:55px;
+    left:67px;
+    top:55px;
+    background:linear-gradient(135deg,#273849,#0b1620);
+    border-radius:4px;
+}
+
+.ram{
+    width:14px;
+    height:110px;
+    left:135px;
+    top:50px;
+    background:linear-gradient(#152a3d,#0c1a27);
+}
+
+.ram:nth-child(2){
+    left:153px;
+}
+
+.gpu{
+    width:155px;
+    height:65px;
+    left:20px;
+    top:175px;
+    border-radius:5px;
+}
+
+.gpu::after{
+    content:"GPU";
+    position:absolute;
+    inset:0;
+    display:grid;
+    place-items:center;
+    font-family:Orbitron;
+    color:var(--cyan);
+    font-size:12px;
+}
+
+.gpu-fan{
+    position:absolute;
+    width:38px;
+    height:38px;
+    border:3px solid rgba(77,231,255,.3);
+    border-radius:50%;
+    left:25px;
+    top:12px;
+    animation:spin 5s linear infinite;
+}
+
+.gpu-fan::after{
+    content:"";
+    position:absolute;
+    inset:8px;
+    border-radius:50%;
+    border:1px dashed var(--cyan);
+}
+
+@keyframes spin{
+    to{transform:rotate(360deg)}
+}
+
+.psu{
+    width:150px;
+    height:80px;
+    bottom:25px;
+    left:55px;
+    border-color:rgba(255,174,74,.3);
+}
+
+.psu::after{
+    content:"PSU";
+    position:absolute;
+    inset:0;
+    display:grid;
+    place-items:center;
+    font-family:Orbitron;
+    font-size:12px;
+    color:var(--orange);
+}
+
+.ssd{
+    width:65px;
+    height:25px;
+    right:20px;
+    top:245px;
+    color:var(--green);
+}
+
+.cooler{
+    width:75px;
+    height:75px;
+    border-radius:50%;
+    left:57px;
+    top:45px;
+    border:4px solid rgba(77,231,255,.18);
+}
+
+.cooler::after{
+    content:"";
+    position:absolute;
+    inset:10px;
+    border-radius:50%;
+    border:2px dashed var(--cyan);
+    animation:spin 4s linear infinite;
+}
+
+.pc-label{
+    position:absolute;
+    font-family:Orbitron;
+    font-size:10px;
+    color:var(--cyan);
+    text-shadow:0 0 8px var(--cyan);
+}
+
+/* =========================
+   STATS
+   ========================= */
+
+.stats{
+    padding:0 5% 80px;
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:15px;
+}
+
+.stat{
+    padding:22px;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:12px;
+}
+
+.stat-number{
+    font-family:Orbitron;
+    font-size:27px;
+    color:var(--cyan);
+}
+
+.stat-label{
+    color:var(--muted);
+    font-size:12px;
+    margin-top:7px;
+}
+
+/* =========================
+   SECTIONS
+   ========================= */
+
+section{
+    padding:80px 5%;
+}
+
+.section-heading{
+    max-width:800px;
+    margin-bottom:35px;
+}
+
+.section-heading small{
+    color:var(--cyan);
+    font-family:Orbitron;
+    letter-spacing:3px;
+}
+
+.section-heading h2{
+    font-family:Orbitron;
+    font-size:clamp(28px,4vw,48px);
+    margin:12px 0;
+}
+
+.section-heading p{
+    color:var(--muted);
+    line-height:1.7;
+}
+
+/* =========================
+   SEARCH
+   ========================= */
+
+.search-area{
+    display:flex;
+    gap:12px;
+    margin-bottom:20px;
+}
+
+.search{
+    flex:1;
+    background:var(--panel);
+    border:1px solid var(--line);
+    color:white;
+    padding:15px 18px;
+    border-radius:9px;
+    outline:none;
+}
+
+.search:focus{
+    border-color:var(--cyan);
+    box-shadow:0 0 20px rgba(77,231,255,.08);
+}
+
+.filters{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    margin-bottom:30px;
+}
+
+.filter{
+    border:1px solid var(--line);
+    color:var(--muted);
+    background:transparent;
+    padding:9px 13px;
+    border-radius:30px;
+}
+
+.filter.active,
+.filter:hover{
+    color:white;
+    border-color:var(--cyan);
+    background:rgba(77,231,255,.07);
+}
+
+/* =========================
+   PART CARDS
+   ========================= */
+
+.parts-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:15px;
+}
+
+.part-card{
+    position:relative;
+    padding:22px;
+    min-height:220px;
+    border:1px solid var(--line);
+    background:linear-gradient(145deg,rgba(15,26,41,.9),rgba(6,12,20,.95));
+    border-radius:13px;
+    cursor:pointer;
+    transition:.3s;
+    overflow:hidden;
+}
+
+.part-card::before{
+    content:"";
+    position:absolute;
+    width:100px;
+    height:100px;
+    right:-50px;
+    top:-50px;
+    background:var(--cyan);
+    opacity:.06;
+    border-radius:50%;
+    filter:blur(20px);
+}
+
+.part-card:hover{
+    transform:translateY(-5px);
+    border-color:rgba(77,231,255,.5);
+    box-shadow:0 15px 40px rgba(0,0,0,.3);
+}
+
+.part-icon{
+    font-size:30px;
+    margin-bottom:15px;
+}
+
+.part-card h3{
+    font-family:Orbitron;
+    font-size:14px;
+    margin-bottom:9px;
+}
+
+.part-card p{
+    color:var(--muted);
+    font-size:12px;
+    line-height:1.6;
+}
+
+.tag{
+    display:inline-block;
+    margin-top:15px;
+    font-size:9px;
+    color:var(--cyan);
+    border:1px solid rgba(77,231,255,.2);
+    padding:4px 7px;
+    border-radius:20px;
+}
+
+/* =========================
+   MODAL
+   ========================= */
+
+.modal{
+    position:fixed;
+    z-index:2000;
+    inset:0;
+    background:rgba(0,0,0,.75);
+    backdrop-filter:blur(10px);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+}
+
+.modal.open{
+    display:flex;
+}
+
+.modal-box{
+    width:min(950px,100%);
+    max-height:90vh;
+    overflow:auto;
+    background:#08111b;
+    border:1px solid rgba(77,231,255,.3);
+    border-radius:16px;
+    box-shadow:0 0 70px rgba(0,190,255,.15);
+    padding:30px;
+    position:relative;
+}
+
+.close{
+    position:absolute;
+    right:20px;
+    top:15px;
+    background:none;
+    border:0;
+    color:white;
+    font-size:28px;
+}
+
+.modal-top{
+    display:flex;
+    gap:20px;
+    align-items:center;
+    padding-right:35px;
+}
+
+.modal-icon{
+    font-size:50px;
+}
+
+.modal h2{
+    font-family:Orbitron;
+    font-size:28px;
+}
+
+.modal-subtitle{
+    color:var(--cyan);
+    font-size:12px;
+    margin-top:7px;
+}
+
+.modal-section{
+    margin-top:25px;
+}
+
+.modal-section h3{
+    color:var(--cyan);
+    font-family:Orbitron;
+    font-size:13px;
+    margin-bottom:9px;
+}
+
+.modal-section p,
+.modal-section li{
+    color:#a9bac9;
+    font-size:14px;
+    line-height:1.75;
+}
+
+.modal-section ul{
+    padding-left:20px;
+}
+
+.modal-actions{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-top:25px;
+}
+
+/* =========================
+   HISTORY
+   ========================= */
+
+.timeline{
+    position:relative;
+    max-width:900px;
+    margin:auto;
+}
+
+.timeline::before{
+    content:"";
+    position:absolute;
+    left:50%;
+    top:0;
+    bottom:0;
+    width:1px;
+    background:linear-gradient(var(--cyan),transparent);
+}
+
+.timeline-item{
+    width:50%;
+    padding:20px 35px;
+    position:relative;
+}
+
+.timeline-item:nth-child(even){
+    margin-left:50%;
+}
+
+.timeline-item::after{
+    content:"";
+    position:absolute;
+    top:27px;
+    width:12px;
+    height:12px;
+    background:var(--cyan);
+    border-radius:50%;
+    box-shadow:0 0 18px var(--cyan);
+}
+
+.timeline-item:nth-child(odd)::after{
+    right:-6px;
+}
+
+.timeline-item:nth-child(even)::after{
+    left:-6px;
+}
+
+.timeline-card{
+    background:var(--panel);
+    border:1px solid var(--line);
+    padding:20px;
+    border-radius:12px;
+}
+
+.timeline-year{
+    color:var(--cyan);
+    font-family:Orbitron;
+    font-size:13px;
+}
+
+.timeline-card h3{
+    margin:8px 0;
+}
+
+.timeline-card p{
+    color:var(--muted);
+    font-size:13px;
+    line-height:1.6;
+}
+
+/* =========================
+   FUTURE
+   ========================= */
+
+.future-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:16px;
+}
+
+.future-card{
+    border:1px solid var(--line);
+    background:var(--panel);
+    border-radius:14px;
+    padding:25px;
+    transition:.3s;
+}
+
+.future-card:hover{
+    transform:translateY(-5px);
+    border-color:var(--purple);
+}
+
+.future-card .big{
+    font-size:35px;
+}
+
+.future-card h3{
+    font-family:Orbitron;
+    font-size:14px;
+    margin:15px 0 9px;
+}
+
+.future-card p{
+    color:var(--muted);
+    font-size:13px;
+    line-height:1.7;
+}
+
+/* =========================
+   QUIZ
+   ========================= */
+
+.quiz{
+    max-width:850px;
+    margin:auto;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:30px;
+}
+
+.quiz-question{
+    font-size:21px;
+    line-height:1.5;
+    margin-bottom:25px;
+}
+
+.answers{
+    display:grid;
+    gap:10px;
+}
+
+.answer{
+    text-align:left;
+    padding:15px;
+    border:1px solid var(--line);
+    background:rgba(255,255,255,.02);
+    color:#d9e8f1;
+    border-radius:8px;
+}
+
+.answer:hover{
+    border-color:var(--cyan);
+}
+
+.answer.correct{
+    border-color:var(--green);
+    background:rgba(66,245,167,.08);
+}
+
+.answer.wrong{
+    border-color:var(--red);
+    background:rgba(255,93,120,.08);
+}
+
+.quiz-result{
+    margin-top:20px;
+    color:var(--cyan);
+}
+
+/* =========================
+   FOOTER
+   ========================= */
+
+footer{
+    padding:60px 5%;
+    border-top:1px solid var(--line);
+    text-align:center;
+    color:var(--muted);
+}
+
+footer strong{
+    color:white;
+    font-family:Orbitron;
+}
+
+footer p{
+    margin-top:10px;
+    font-size:12px;
+}
+
+/* =========================
+   RESPONSIVE
+   ========================= */
+
+@media(max-width:1000px){
+    .parts-grid{
+        grid-template-columns:repeat(3,1fr);
+    }
+
+    .future-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+}
+
+@media(max-width:800px){
+    nav{
+        display:none;
+    }
+
+    .hero{
+        grid-template-columns:1fr;
+    }
+
+    .scene{
+        height:500px;
+    }
+
+    .stats{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .parts-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .timeline::before{
+        left:10px;
+    }
+
+    .timeline-item,
+    .timeline-item:nth-child(even){
+        width:100%;
+        margin-left:0;
+        padding-left:35px;
+    }
+
+    .timeline-item::after,
+    .timeline-item:nth-child(odd)::after,
+    .timeline-item:nth-child(even)::after{
+        left:4px;
+        right:auto;
+    }
+}
+
+@media(max-width:520px){
+    .hero h1{
+        font-size:38px;
+    }
+
+    .parts-grid,
+    .future-grid{
+        grid-template-columns:1fr;
+    }
+
+    .stats{
+        grid-template-columns:1fr;
+    }
+
+    .pc{
+        transform:scale(.8) rotateY(-20deg);
+    }
+
+    .search-area{
+        flex-direction:column;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- =========================================================
+     HEADER
+     ========================================================= -->
+
+<header>
+    <div class="logo">TECH<span>NOVA</span></div>
+
+    <nav>
+        <a href="#explorer">Explorer</a>
+        <a href="#history">History</a>
+        <a href="#future">Future</a>
+        <a href="#quiz">Quiz</a>
+    </nav>
+
+    <div class="header-status">
+        <span class="status-dot"></span>
+        SYSTEM ONLINE
+    </div>
+</header>
+
+
+<!-- =========================================================
+     HERO
+     ========================================================= -->
+
+<main>
+
+<section class="hero">
+
+    <div class="hero-content">
+        <h1>-Made by Sreemon</h1>
+
+        <div class="eyebrow">INTERACTIVE COMPUTER MUSEUM // 01</div>
+
+        <h1>
+            INSIDE<br>
+            THE <span>COMPUTER</span>
+        </h1>
+
+        <p>
+            Explore the hardware inside a modern computer.
+            Discover what every component does, where it lives,
+            how it works, how it evolved, and where technology
+            could go next.
+        </p>
+
+        <div class="hero-actions">
+            <button class="btn btn-primary"
+                    onclick="document.querySelector('#explorer').scrollIntoView()">
+                ENTER THE COMPUTER →
+            </button>
+
+            <button class="btn"
+                    onclick="document.querySelector('#history').scrollIntoView()">
+                VIEW HISTORY
+            </button>
+        </div>
+
+    </div>
+
+
+    <!-- 3D PC -->
+
+    <div class="scene">
+
+        <div class="pc">
+
+            <div class="case">
+
+                <div class="glass"></div>
+
+                <div class="component mobo">
+                    <div class="mobo-lines"></div>
+
+                    <div class="component cpu-chip"></div>
+
+                    <div class="component ram"></div>
+                    <div class="component ram"></div>
+
+                    <div class="component gpu">
+                        <div class="gpu-fan"></div>
+                    </div>
+                </div>
+
+                <div class="component cooler"></div>
+
+                <div class="component ssd"></div>
+
+                <div class="component psu"></div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     STATS
+     ========================================================= -->
+
+<section class="stats">
+
+    <div class="stat">
+        <div class="stat-number" id="partsCount">0</div>
+        <div class="stat-label">COMPONENTS TO EXPLORE</div>
+    </div>
+
+    <div class="stat">
+        <div class="stat-number">10+</div>
+        <div class="stat-label">HISTORICAL ERAS</div>
+    </div>
+
+    <div class="stat">
+        <div class="stat-number">∞</div>
+        <div class="stat-label">FUTURE POSSIBILITIES</div>
+    </div>
+
+    <div class="stat">
+        <div class="stat-number" id="progressNumber">0%</div>
+        <div class="stat-label">YOUR LEARNING PROGRESS</div>
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     EXPLORER
+     ========================================================= -->
+
+<section id="explorer">
+
+    <div class="section-heading">
+        <small>02 // HARDWARE DATABASE</small>
+        <h2>EXPLORE THE PARTS</h2>
+        <p>
+            Click any component to learn what it is, where it is
+            located, how it works, its history, current technology,
+            and future developments.
+        </p>
+    </div>
+
+
+    <div class="search-area">
+
+        <input
+            id="search"
+            class="search"
+            type="search"
+            placeholder="🔍 Search CPU, GPU, RAM, USB, motherboard..."
+            autocomplete="off"
+        >
+
+    </div>
+
+
+    <div class="filters" id="filters"></div>
+
+
+    <div class="parts-grid" id="partsGrid"></div>
+
+</section>
+
+
+<!-- =========================================================
+     HISTORY
+     ========================================================= -->
+
+<section id="history">
+
+    <div class="section-heading">
+        <small>03 // TIMELINE</small>
+        <h2>THE HISTORY OF COMPUTING</h2>
+        <p>
+            Computers didn't become powerful overnight.
+            Explore the major technological milestones that
+            transformed computing.
+        </p>
+    </div>
+
+
+    <div class="timeline">
+
+        <div class="timeline-item">
+            <div class="timeline-card">
+                <div class="timeline-year">1940s</div>
+                <h3>VACUUM TUBES</h3>
+                <p>
+                    Early electronic computers used thousands of
+                    vacuum tubes. Machines were enormous and consumed
+                    huge amounts of power.
+                </p>
+            </div>
+        </div>
+
+
+        <div class="timeline-item">
+            <div class="timeline-card">
+                <div class="timeline-year">1950s</div>
+                <h3>TRANSISTORS</h3>
+                <p>
+                    Transistors began replacing vacuum tubes,
+                    allowing computers to become smaller, faster
+                    and more reliable.
+                </p>
+            </div>
+        </div>
+
+
+        <div class="timeline-item">
+            <div class="timeline-card">
+                <div class="timeline-year">1960s</div>
+                <h3>INTEGRATED CIRCUITS</h3>
+                <p>
+                    Multiple electronic components could now be
+                    placed on semiconductor chips.
+                </p>
+            </div>
+        </div>
+
+
+        <div class="timeline-item">
+            <div class="timeline-card">
+                <div class="timeline-year">1970s</div>
+                <h3>MICROPROCESSORS</h3>
+                <p>
+                    The CPU began appearing as a single integrated
+                    microprocessor, dramatically changing computing.
+                </p>
+            </div>
+        </div>
+
+
+        <div class="timeline-item">
+            <div class="timeline-card">
+                <div class="timeline-year">1980s</div>
+                <h3>PERSONAL COMPUTERS</h3>
+                <p>
+                    Computers became increasingly accessible to
+                    homes, schools and businesses.
+                </p>
+            </div>
+        </div>
+
+
+        <div class="timeline-item">
+            <div class="timeline-card">
+                <div class="timeline-year">1990s</div>
+                <h3>THE INTERNET ERA</h3>
+                <p>
+                    Networking and the World Wide Web transformed
+                    computers into communication and information
+                    platforms.
+                </p>
+            </div>
+        </div>
+
+
+        <div class="timeline-item">
+            <div class="timeline-card">
+                <div class="timeline-year">2000s</div>
+                <h3>MULTI-CORE COMPUTING</h3>
+                <p>
+                    CPUs increasingly used multiple processing cores,
+                    while GPUs became increasingly programmable.
+                </p>
+            </div>
+        </div>
+
+
+        <div class="timeline-item">
+            <div class="timeline-card">
+                <div class="timeline-year">2010s</div>
+                <h3>SSD + MOBILE COMPUTING</h3>
+                <p>
+                    Flash storage became mainstream while smartphones,
+                    laptops and cloud computing transformed everyday
+                    computing.
+                </p>
+            </div>
+        </div>
+
+
+        <div class="timeline-item">
+            <div class="timeline-card">
+                <div class="timeline-year">2020s</div>
+                <h3>AI COMPUTING</h3>
+                <p>
+                    AI accelerators, advanced GPUs, chiplets,
+                    high-bandwidth memory and specialized processors
+                    became increasingly important.
+                </p>
+            </div>
+        </div>
+
+
+        <div class="timeline-item">
+            <div class="timeline-card">
+                <div class="timeline-year">NEXT</div>
+                <h3>THE FUTURE</h3>
+                <p>
+                    Computing continues toward heterogeneous
+                    processors, advanced packaging, AI acceleration,
+                    optical interconnects and potentially new
+                    computing architectures.
+                </p>
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     FUTURE
+     ========================================================= -->
+
+<section id="future">
+
+    <div class="section-heading">
+        <small>04 // NEXT GENERATION</small>
+        <h2>WHERE COMPUTERS ARE GOING</h2>
+        <p>
+            Some technologies are already being developed while
+            others remain research directions. The future is not
+            guaranteed — but these areas are worth watching.
+        </p>
+    </div>
+
+
+    <div class="future-grid">
+
+        <div class="future-card">
+            <div class="big">🧠</div>
+            <h3>AI ACCELERATORS</h3>
+            <p>
+                CPUs and GPUs are increasingly joined by specialized
+                hardware designed to accelerate machine-learning
+                workloads.
+            </p>
+        </div>
+
+
+        <div class="future-card">
+            <div class="big">🧩</div>
+            <h3>CHIPLET ARCHITECTURE</h3>
+            <p>
+                Instead of creating one enormous chip, designers can
+                combine smaller chiplets into a larger processor system.
+            </p>
+        </div>
+
+
+        <div class="future-card">
+            <div class="big">🧱</div>
+            <h3>3D CHIP STACKING</h3>
+            <p>
+                Semiconductor components can be stacked vertically
+                to increase density and shorten communication paths.
+            </p>
+        </div>
+
+
+        <div class="future-card">
+            <div class="big">⚡</div>
+            <h3>HIGH BANDWIDTH MEMORY</h3>
+            <p>
+                Stacked memory technologies can provide enormous
+                memory bandwidth for demanding workloads such as AI
+                and scientific computing.
+            </p>
+        </div>
+
+
+        <div class="future-card">
+            <div class="big">💡</div>
+            <h3>OPTICAL COMPUTING</h3>
+            <p>
+                Researchers are exploring photonic technologies that
+                use light for parts of computation and communication.
+            </p>
+        </div>
+
+
+        <div class="future-card">
+            <div class="big">⚛️</div>
+            <h3>QUANTUM COMPUTING</h3>
+            <p>
+                Quantum computers use fundamentally different
+                computational principles and may eventually solve
+                certain specialized problems.
+            </p>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     QUIZ
+     ========================================================= -->
+
+<section id="quiz">
+
+    <div class="section-heading">
+        <small>05 // KNOWLEDGE TEST</small>
+        <h2>CAN YOU BEAT THE COMPUTER?</h2>
+        <p>
+            Test what you've learned.
+        </p>
+    </div>
+
+
+    <div class="quiz">
+
+        <div id="quizQuestion" class="quiz-question"></div>
+
+        <div id="answers" class="answers"></div>
+
+        <div id="quizResult" class="quiz-result"></div>
+
+        <button
+            id="nextQuestion"
+            class="btn btn-primary"
+            style="margin-top:20px;display:none">
+            NEXT QUESTION →
+        </button>
+
+    </div>
+
+</section>
+
+</main>
+
+
+<!-- =========================================================
+     MODAL
+     ========================================================= -->
+
+<div class="modal" id="modal">
+
+    <div class="modal-box">
+
+        <button class="close" onclick="closeModal()">×</button>
+
+        <div class="modal-top">
+
+            <div class="modal-icon" id="modalIcon"></div>
+
+            <div>
+                <h2 id="modalTitle"></h2>
+                <div class="modal-subtitle" id="modalCategory"></div>
+            </div>
+
+        </div>
+
+
+        <div class="modal-section">
+            <h3>WHAT IS IT?</h3>
+            <p id="modalWhat"></p>
+        </div>
+
+
+        <div class="modal-section">
+            <h3>📍 WHERE IS IT?</h3>
+            <p id="modalWhere"></p>
+        </div>
+
+
+        <div class="modal-section">
+            <h3>⚙️ HOW DOES IT WORK?</h3>
+            <p id="modalHow"></p>
+        </div>
+
+
+        <div class="modal-section">
+            <h3>📜 HISTORY</h3>
+            <p id="modalHistory"></p>
+        </div>
+
+
+        <div class="modal-section">
+            <h3>🚀 CURRENT TECHNOLOGY</h3>
+            <p id="modalCurrent"></p>
+        </div>
+
+
+        <div class="modal-section">
+            <h3>🔮 FUTURE / UPCOMING TECHNOLOGY</h3>
+            <p id="modalFuture"></p>
+        </div>
+
+
+        <div class="modal-section">
+            <h3>⭐ KEY THINGS TO REMEMBER</h3>
+            <ul id="modalFacts"></ul>
+        </div>
+
+
+        <div class="modal-actions">
+
+            <a
+                id="youtubeLink"
+                class="btn btn-primary"
+                target="_blank"
+                rel="noopener">
+                ▶ WATCH ON YOUTUBE
+            </a>
+
+            <a
+                id="searchLink"
+                class="btn"
+                target="_blank"
+                rel="noopener">
+                🔎 RESEARCH MORE
+            </a>
+
+            <button
+                class="btn"
+                id="favoriteButton">
+                ☆ BOOKMARK
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     FOOTER
+     ========================================================= -->
+
+<footer>
+
+    <strong>TECHNOVA // INSIDE THE COMPUTER</strong>
+
+    <p>
+        An educational interactive computer hardware museum.
+        Built with HTML5, CSS3 and ECMAScript.
+    </p>
+
+    <p>
+        Technology changes quickly. Always verify current hardware
+        specifications and product availability from manufacturers.
+    </p>
+
+</footer>
+
+
+<script>
+/* =========================================================
+   TECHNOVA JAVASCRIPT
+   ========================================================= */
+
+
+/* =========================================================
+   COMPUTER PART DATABASE
+   ========================================================= */
+
+const parts = [
+
+{
+name:"Motherboard",
+icon:"🟩",
+category:"Core",
+what:"The motherboard is the main circuit board of a computer. It connects the CPU, RAM, storage, expansion cards, power system and many external devices.",
+where:"Inside the computer case. Most major components connect directly to it or through cables attached to it.",
+how:"Electrical signals travel through copper traces and buses on the motherboard. Connectors, slots and controllers allow different components to communicate.",
+history:"Early computers used large collections of separate boards and wiring. Modern motherboards integrate many functions and provide standardized expansion interfaces.",
+current:"Modern boards commonly support DDR5 memory, PCI Express expansion, NVMe storage, USB, high-speed networking and increasingly sophisticated power delivery.",
+future:"Motherboards will continue evolving around faster interconnects, more integrated controllers, PCIe generations, high-speed memory and advanced power delivery.",
+facts:["Connects major PC components","Contains slots and ports","Hosts CPU socket and RAM slots"],
+youtube:"how a motherboard works computer explained",
+search:"motherboard technology explained"
+},
+
+{
+name:"CPU",
+icon:"🧠",
+category:"Core",
+what:"The Central Processing Unit executes instructions and performs calculations. It is one of the main general-purpose processing units in a computer.",
+where:"Installed into a CPU socket on the motherboard, usually underneath a CPU cooler.",
+how:"The CPU repeatedly fetches instructions, decodes them and executes operations using cores, caches, execution units and other internal structures.",
+history:"Modern microprocessors emerged in the 1970s. CPUs progressed from single-core designs to multi-core processors with sophisticated cache and power-management systems.",
+current:"Modern desktop CPUs use multiple performance-oriented and/or efficiency-oriented cores, large caches and advanced manufacturing processes.",
+future:"Expect continued work on chiplets, 3D cache, heterogeneous computing, AI acceleration and more efficient architectures.",
+facts:["Executes program instructions","Has multiple cores in modern systems","Uses cache to reduce memory latency"],
+youtube:"how a CPU works explained",
+search:"modern CPU architecture explained"
+},
+
+{
+name:"RAM",
+icon:"⚡",
+category:"Memory",
+what:"Random Access Memory is the computer's fast working memory. Programs and data currently being used are kept here.",
+where:"RAM modules are installed into DIMM slots on the motherboard.",
+how:"RAM stores data electronically and provides the CPU with much faster access than most persistent storage.",
+history:"Computer memory evolved from magnetic technologies and various semiconductor memory types into modern DRAM.",
+current:"DDR5 is a major current desktop memory standard, offering increased bandwidth and capacity compared with previous generations.",
+future:"Future memory systems will focus on greater bandwidth, efficiency, capacity and integration with increasingly heterogeneous processors.",
+facts:["Temporary working memory","Much faster than SSD/HDD storage","Loses normal working data when power is removed"],
+youtube:"how RAM works explained",
+search:"DDR5 RAM explained"
+},
+
+{
+name:"GPU",
+icon:"🎮",
+category:"Processing",
+what:"The Graphics Processing Unit performs highly parallel calculations, originally focused on graphics but now also widely used for AI, simulation and scientific workloads.",
+where:"Usually installed in a PCIe slot as a dedicated graphics card, although some computers have integrated graphics inside the processor.",
+how:"A GPU contains many parallel processing resources capable of executing large numbers of similar operations simultaneously.",
+history:"GPUs evolved from dedicated graphics accelerators into highly programmable parallel processors.",
+current:"Modern GPUs are used for gaming, rendering, AI, video processing and scientific workloads.",
+future:"GPU development is strongly tied to AI acceleration, ray tracing, memory bandwidth and specialized compute units.",
+facts:["Highly parallel processor","Important for graphics and AI","Dedicated GPUs usually use VRAM"],
+youtube:"how a GPU works explained",
+search:"modern GPU architecture explained"
+},
+
+{
+name:"PSU",
+icon:"⚡",
+category:"Power",
+what:"The Power Supply Unit converts electricity from the wall into the regulated voltages required by computer components.",
+where:"Usually mounted at the bottom or sometimes the top/rear of a desktop computer case.",
+how:"The PSU converts and regulates incoming AC power into DC output rails used by the motherboard, CPU, GPU and drives.",
+history:"PC power supplies evolved significantly as computers became more powerful and efficiency standards improved.",
+current:"Modern PSUs commonly use high-efficiency designs and modular cabling on many models.",
+future:"Higher efficiency, improved transient response and support for increasingly power-hungry GPUs are important development areas.",
+facts:["Converts AC to regulated DC","Provides power to components","Quality matters for system stability"],
+youtube:"how a PC power supply works",
+search:"modern ATX power supply explained"
+},
+
+{
+name:"SSD",
+icon:"💾",
+category:"Storage",
+what:"A Solid State Drive stores data using flash memory without mechanical spinning disks.",
+where:"Depending on the type, an SSD may be mounted inside the case using SATA connections or an M.2 slot.",
+how:"Data is stored electronically in NAND flash memory cells and managed by a controller.",
+history:"SSDs developed from flash-memory technologies and became increasingly affordable and common during the 2000s and 2010s.",
+current:"SATA and NVMe SSDs are both widely used, with NVMe generally providing much higher interface bandwidth.",
+future:"Storage development continues toward higher density NAND, faster interfaces and improved endurance.",
+facts:["No spinning mechanical disk","Faster access than HDDs","Uses NAND flash"],
+youtube:"how an SSD works",
+search:"SSD NAND flash explained"
+},
+
+{
+name:"HDD",
+icon:"🗄️",
+category:"Storage",
+what:"A Hard Disk Drive stores information magnetically on rotating platters.",
+where:"Usually mounted in a drive bay inside a desktop computer.",
+how:"A mechanical actuator moves read/write heads over spinning magnetic platters.",
+history:"Hard drives became a dominant form of mass storage for decades and dramatically increased capacity over time.",
+current:"HDDs remain useful for inexpensive high-capacity storage.",
+future:"Hard-drive research continues to increase storage density and reliability.",
+facts:["Uses magnetic platters","Contains moving mechanical parts","Good for large inexpensive storage"],
+youtube:"how a hard disk drive works",
+search:"HDD magnetic storage explained"
+},
+
+{
+name:"NVMe SSD",
+icon:"🚀",
+category:"Storage",
+what:"NVMe is a storage protocol designed for high-speed non-volatile memory, commonly used with PCIe-connected SSDs.",
+where:"Often installed through an M.2 slot on the motherboard.",
+how:"NVMe communicates with storage over PCIe and is designed to efficiently handle many parallel storage operations.",
+history:"NVMe was developed as a modern alternative to older storage protocols designed around slower interfaces.",
+current:"PCIe NVMe SSDs are standard high-performance storage in many modern PCs.",
+future:"Newer PCIe generations and increasingly dense NAND will continue improving performance and capacity.",
+facts:["Uses PCIe","Usually much faster than SATA SSDs","Commonly installed in M.2 form factors"],
+youtube:"NVMe SSD explained",
+search:"NVMe PCIe SSD explained"
+},
+
+{
+name:"M.2 Drive",
+icon:"📏",
+category:"Storage",
+what:"M.2 describes a compact physical form factor used by storage devices and some other modules.",
+where:"M.2 devices connect directly to M.2 sockets on compatible motherboards.",
+how:"An M.2 device can use different interfaces depending on the module. NVMe M.2 drives typically use PCIe.",
+history:"M.2 was introduced as a compact replacement for several older expansion and storage form factors.",
+current:"M.2 NVMe SSDs are extremely common in modern desktop and laptop computers.",
+future:"M.2-compatible storage will continue evolving alongside PCIe and NAND technology.",
+facts:["M.2 is a form factor","Not every M.2 drive is NVMe","Check motherboard compatibility"],
+youtube:"M.2 SSD explained",
+search:"M.2 SATA vs NVMe explained"
+},
+
+{
+name:"Optical Drive",
+icon:"💿",
+category:"Storage",
+what:"An optical drive reads or writes optical discs such as CDs, DVDs and Blu-ray discs.",
+where:"Usually installed in a front-facing drive bay in desktops, although internal optical drives are increasingly uncommon.",
+how:"A laser reads information encoded on an optical disc. Writable drives use lasers to modify recordable media.",
+history:"CD-ROMs became important in personal computers before DVDs and Blu-ray expanded optical capacity.",
+current:"Optical drives are less common in new PCs but remain useful for legacy media and physical archives.",
+future:"Optical storage remains relevant for certain archival applications even as everyday consumer use declines.",
+facts:["Uses lasers","Reads optical discs","Less common in modern PCs"],
+youtube:"how CD DVD drive works",
+search:"optical drive explained"
+},
+
+{
+name:"Computer Case",
+icon:"🖥️",
+category:"Core",
+what:"The computer case or chassis physically houses and protects internal components.",
+where:"It is the outer enclosure surrounding the internal hardware.",
+how:"The chassis provides mounting points, airflow paths, cable-routing areas and protection from physical damage.",
+history:"PC cases evolved from simple metal boxes into highly configurable systems with sophisticated cooling and cable management.",
+current:"Modern cases come in many form factors including ATX, Micro-ATX and Mini-ITX.",
+future:"Case design increasingly focuses on airflow, acoustics, compact layouts and serviceability.",
+facts:["Protects components","Controls airflow","Determines compatibility and physical size"],
+youtube:"PC case airflow explained",
+search:"computer case form factors explained"
+},
+
+{
+name:"CPU Air Cooler",
+icon:"❄️",
+category:"Cooling",
+what:"An air cooler removes heat from the CPU using a metal heatsink and fan.",
+where:"Mounted directly on top of the CPU.",
+how:"Thermal energy travels from the CPU into the cooler's base and heat pipes, then into fins where airflow carries heat away.",
+history:"CPU cooling progressed from basic heatsinks to large tower coolers with heat pipes and multiple fans.",
+current:"Tower-style air coolers are widely used because they can provide strong cooling without a pump.",
+future:"Improved heat pipes, materials, fan designs and compact thermal solutions will continue to evolve.",
+facts:["Uses a heatsink and fan","Usually simpler than liquid cooling","Needs correct CPU/socket mounting"],
+youtube:"how CPU air cooler works",
+search:"CPU tower cooler explained"
+},
+
+{
+name:"Liquid Cooler",
+icon:"💧",
+category:"Cooling",
+what:"A liquid cooler uses coolant to transfer heat from the CPU to a radiator.",
+where:"The CPU block sits on the CPU while the radiator is mounted elsewhere in the case.",
+how:"A pump circulates coolant between the CPU block and radiator, where fans remove heat.",
+history:"Liquid cooling moved from enthusiast custom loops toward easier all-in-one systems.",
+current:"AIO coolers are common for high-performance desktop CPUs.",
+future:"Cooling systems will continue improving pump reliability, radiator performance, acoustic behavior and thermal density.",
+facts:["Uses coolant","AIO means All-In-One","Custom loops offer greater flexibility but require more maintenance"],
+youtube:"how AIO liquid cooling works",
+search:"AIO CPU cooler explained"
+},
+
+{
+name:"Case Fans",
+icon:"🌀",
+category:"Cooling",
+what:"Case fans move air through the computer chassis.",
+where:"Mounted at front, rear, top, bottom or side positions depending on the case.",
+how:"Fans create airflow that brings cooler air into the case and removes warm air.",
+history:"PC cooling evolved from basic fans to optimized airflow systems with PWM control and advanced bearings.",
+current:"PWM fans can dynamically adjust speed according to temperature or motherboard control.",
+future:"Fan technology will continue focusing on efficiency, noise reduction and airflow optimization.",
+facts:["Move air","Can be intake or exhaust","Good airflow helps components stay cooler"],
+youtube:"PC case airflow explained",
+search:"best PC airflow explained"
+},
+
+{
+name:"Thermal Paste",
+icon:"🧪",
+category:"Cooling",
+what:"Thermal paste is a thermally conductive material placed between a processor and cooler to improve heat transfer.",
+where:"A thin layer sits between the CPU heat spreader and cooler base.",
+how:"It fills microscopic gaps between surfaces, reducing thermal resistance.",
+history:"Thermal interface materials have evolved alongside increasingly powerful processors.",
+current:"Modern thermal pastes are designed for long service life and efficient heat transfer.",
+future:"Advanced thermal interface materials may provide better conductivity and durability.",
+facts:["Improves contact between surfaces","Only a thin layer is needed","It is not a substitute for a proper cooler"],
+youtube:"how thermal paste works",
+search:"CPU thermal paste explained"
+},
+
+{
+name:"Keyboard",
+icon:"⌨️",
+category:"Peripheral",
+what:"A keyboard is an input device used to enter characters, commands and shortcuts.",
+where:"Usually sits externally on a desk and connects through USB or wireless technology.",
+how:"Pressing a key triggers an electrical or electronic switch that the keyboard controller translates into input data.",
+history:"Modern keyboards evolved from typewriters and early computer terminals.",
+current:"Mechanical, membrane and low-profile keyboards are widely available.",
+future:"Optical switches, low-latency wireless connections and adaptive input technologies continue to develop.",
+facts:["Input device","Mechanical switches are one popular design","Can connect wired or wirelessly"],
+youtube:"how a keyboard works",
+search:"mechanical keyboard explained"
+},
+
+{
+name:"Mouse",
+icon:"🖱️",
+category:"Peripheral",
+what:"A mouse is a pointing device used to move a cursor and interact with graphical interfaces.",
+where:"External desk device.",
+how:"Optical or laser sensors detect movement while buttons and wheels provide additional input.",
+history:"Computer mice evolved from simple mechanical designs to modern optical sensors.",
+current:"Gaming mice commonly use high-resolution optical sensors and low-latency connections.",
+future:"Gesture input, improved sensors and increasingly sophisticated wireless systems will continue to evolve.",
+facts:["Pointing device","Optical sensors are common","Reports movement to the computer"],
+youtube:"how a computer mouse works",
+search:"optical mouse sensor explained"
+},
+
+{
+name:"Monitor",
+icon:"🖥️",
+category:"Display",
+what:"A monitor displays visual information generated by the computer.",
+where:"External display connected to the GPU or computer.",
+how:"The display converts electrical/digital signals into individual pixels that produce images.",
+history:"Computer displays evolved from CRTs to LCD, LED-backlit LCD and OLED technologies.",
+current:"High-refresh-rate LCD and OLED displays are widely used for gaming and professional work.",
+future:"Higher pixel densities, OLED improvements, microLED and other display technologies are active development areas.",
+facts:["Displays images","Resolution describes pixel count","Refresh rate describes how frequently the display updates"],
+youtube:"how a computer monitor works",
+search:"LCD OLED monitor explained"
+},
+
+{
+name:"Speakers",
+icon:"🔊",
+category:"Audio",
+what:"Speakers convert electrical audio signals into sound waves.",
+where:"May be built into a monitor/laptop or connected externally.",
+how:"An amplifier drives speaker drivers, causing a diaphragm to move air and produce sound.",
+history:"Computer audio progressed from simple beeps to sophisticated digital audio systems.",
+current:"USB, analog, Bluetooth and other speaker systems are common.",
+future:"Spatial audio and computational audio processing continue to develop.",
+facts:["Output device","Requires amplification in many systems","Converts electrical signals into sound"],
+youtube:"how computer speakers work",
+search:"speaker driver explained"
+},
+
+{
+name:"Headphones",
+icon:"🎧",
+category:"Audio",
+what:"Headphones provide personal audio through small speaker drivers positioned near the ears.",
+where:"External peripheral connected through wired or wireless technology.",
+how:"Drivers convert electrical audio signals into sound.",
+history:"Headphone technology evolved from early wired audio equipment to sophisticated wireless systems.",
+current:"Wireless headphones commonly use Bluetooth while wired headphones can connect through analog or USB interfaces.",
+future:"Spatial audio, improved wireless codecs and computational audio will continue evolving.",
+facts:["Personal audio output","Can be wired or wireless","Uses speaker drivers"],
+youtube:"how headphones work",
+search:"headphone driver technology explained"
+},
+
+{
+name:"Microphone",
+icon:"🎙️",
+category:"Audio",
+what:"A microphone converts sound waves into an electrical or digital signal.",
+where:"External USB/XLR microphones, headsets or microphones built into laptops/webcams.",
+how:"A diaphragm reacts to sound pressure and the microphone converts that movement into an electrical signal.",
+history:"Microphone technology evolved from early telephone-related inventions into modern condenser, dynamic and MEMS microphones.",
+current:"USB microphones are common for streaming, calls and content creation.",
+future:"AI-assisted noise reduction, beamforming and spatial audio capture are important areas.",
+facts:["Input device","Converts sound into a signal","Used for calls, recording and voice control"],
+youtube:"how a microphone works",
+search:"microphone technology explained"
+},
+
+{
+name:"Webcam",
+icon:"📷",
+category:"Peripheral",
+what:"A webcam is a camera designed to capture video for computers.",
+where:"Usually mounted on top of a monitor or integrated into a laptop.",
+how:"A lens focuses light onto an image sensor, which converts it into digital image data.",
+history:"Webcams became increasingly common as internet video communication grew.",
+current:"Modern webcams support high-resolution video, autofocus and software processing.",
+future:"AI framing, background processing and improved low-light performance will continue developing.",
+facts:["Captures video","Uses an image sensor","Can be integrated or external"],
+youtube:"how a webcam works",
+search:"webcam camera sensor explained"
+},
+
+{
+name:"Printer",
+icon:"🖨️",
+category:"Peripheral",
+what:"A printer produces physical copies of digital documents and images.",
+where:"External peripheral connected through USB, Wi-Fi or a network.",
+how:"Inkjet printers deposit ink while laser printers use toner and electrostatic processes.",
+history:"Printers evolved from dot-matrix systems to inkjet and laser technologies.",
+current:"Inkjet and laser printers dominate many consumer and office applications.",
+future:"3D printing, efficient ink systems and increasingly connected printers continue to evolve.",
+facts:["Output device","Inkjet and laser are common","Can connect through networks"],
+youtube:"how laser printer works",
+search:"laser printer vs inkjet explained"
+},
+
+{
+name:"Scanner",
+icon:"📠",
+category:"Peripheral",
+what:"A scanner converts physical documents or images into digital files.",
+where:"External peripheral.",
+how:"A light source illuminates the document and an image sensor captures the reflected light.",
+history:"Document scanners evolved from early optical scanning systems into high-resolution digital devices.",
+current:"Flatbed and sheet-fed scanners remain common.",
+future:"AI-based document recognition and automated processing will continue improving scanning workflows.",
+facts:["Converts physical documents to digital","Uses image sensors","OCR can recognize text"],
+youtube:"how document scanner works",
+search:"flatbed scanner explained"
+},
+
+{
+name:"Game Controller",
+icon:"🎮",
+category:"Gaming",
+what:"A game controller provides physical controls for interacting with games.",
+where:"External peripheral connected by cable or wireless technology.",
+how:"Buttons, triggers, sticks and sensors send input signals to the computer.",
+history:"Game controllers evolved from simple directional controls to complex analog and motion-enabled devices.",
+current:"Modern controllers commonly include analog sticks, triggers, vibration and wireless connectivity.",
+future:"Haptic feedback, adaptive triggers and motion sensing will continue evolving.",
+facts:["Gaming input device","Can use wired or wireless communication","May include motion sensors"],
+youtube:"how a game controller works",
+search:"game controller technology explained"
+},
+
+{
+name:"Touchscreen",
+icon:"👆",
+category:"Display",
+what:"A touchscreen combines display output with touch-based input.",
+where:"Found in monitors, laptops, tablets, phones and specialized computers.",
+how:"Touch sensors detect contact and the system translates that into input coordinates.",
+history:"Touchscreens evolved from resistive systems to modern capacitive multi-touch interfaces.",
+current:"Capacitive touch is dominant in many consumer devices.",
+future:"Improved haptics, stylus support and spatial interaction are active areas.",
+facts:["Both input and output","Capacitive touch is common","Supports direct interaction"],
+youtube:"how touchscreen works",
+search:"capacitive touchscreen explained"
+},
+
+{
+name:"Graphics Tablet",
+icon:"✍️",
+category:"Peripheral",
+what:"A graphics tablet lets artists draw digitally using a pressure-sensitive stylus.",
+where:"External desk device.",
+how:"The tablet detects stylus position and often pressure, tilt and button inputs.",
+history:"Digitizing tablets became important in CAD, design and digital art.",
+current:"Modern tablets can provide pressure-sensitive and tilt-aware input.",
+future:"Improved displays, stylus tracking and haptic feedback are likely areas of development.",
+facts:["Used for digital drawing","Stylus can detect pressure","Useful for creative work"],
+youtube:"how graphics tablets work",
+search:"graphics tablet pressure sensitivity explained"
+},
+
+{
+name:"Ethernet Port",
+icon:"🌐",
+category:"Networking",
+what:"An Ethernet port allows a computer to connect to a wired network.",
+where:"Usually built into the motherboard's rear I/O panel or provided through a network card.",
+how:"Ethernet sends data as network frames over physical cabling.",
+history:"Ethernet became one of the dominant technologies for local computer networking.",
+current:"Gigabit and faster Ethernet standards are widely used.",
+future:"Higher-speed Ethernet continues developing for data centers and advanced networking.",
+facts:["Wired networking","Usually uses RJ-45 connectors","Can provide reliable low-latency connections"],
+youtube:"how ethernet works",
+search:"Ethernet explained for beginners"
+},
+
+{
+name:"Wi-Fi Adapter",
+icon:"📶",
+category:"Networking",
+what:"A Wi-Fi adapter allows a computer to communicate with wireless networks.",
+where:"Can be integrated into the motherboard, installed as a PCIe card or connected through USB.",
+how:"The adapter converts digital data into radio signals and receives radio signals from wireless networks.",
+history:"Wi-Fi evolved through increasingly faster generations of wireless networking.",
+current:"Wi-Fi 6 and Wi-Fi 7 are important modern generations.",
+future:"Wireless networking will continue improving speed, latency, efficiency and reliability.",
+facts:["Wireless networking","Uses radio communication","Can be internal or external"],
+youtube:"how WiFi works",
+search:"WiFi 7 explained"
+},
+
+{
+name:"Bluetooth Module",
+icon:"🔵",
+category:"Networking",
+what:"Bluetooth provides short-range wireless communication between devices.",
+where:"Often integrated into laptops and wireless networking modules, or added through USB adapters.",
+how:"Bluetooth uses radio communication to exchange data over short distances.",
+history:"Bluetooth was developed to replace short cables between nearby devices.",
+current:"Bluetooth is widely used for headphones, keyboards, mice, controllers and other devices.",
+future:"Improved efficiency, range, reliability and device coordination will continue to develop.",
+facts:["Short-range wireless technology","Used by many peripherals","Low-power versions are common"],
+youtube:"how Bluetooth works",
+search:"Bluetooth technology explained"
+},
+
+{
+name:"Sound Card",
+icon:"🎵",
+category:"Audio",
+what:"A sound card handles audio input and output.",
+where:"May be integrated into the motherboard or installed as a dedicated expansion card/USB device.",
+how:"It converts between digital audio and analog electrical signals and may provide additional audio processing.",
+history:"Dedicated sound cards became important as PCs evolved from basic beeps to multimedia machines.",
+current:"Most motherboards include integrated audio, while dedicated devices serve specialized users.",
+future:"Spatial audio and computational signal processing will continue to improve.",
+facts:["Handles audio input/output","Often integrated","External USB audio devices are also common"],
+youtube:"how a sound card works",
+search:"PC sound card explained"
+},
+
+{
+name:"USB Ports",
+icon:"🔌",
+category:"Connectivity",
+what:"USB ports provide standardized connections for data transfer and power.",
+where:"Found on the front and rear of desktop computers, laptops, hubs and other devices.",
+how:"USB controllers coordinate communication and power between connected devices.",
+history:"USB replaced many separate legacy connectors and became a dominant peripheral interface.",
+current:"USB-C is increasingly important, while USB generations provide different speeds and capabilities.",
+future:"Higher bandwidth, power delivery and improved universal connectivity will continue developing.",
+facts:["Connect peripherals","Can provide power","USB-C is a modern connector type"],
+youtube:"how USB works",
+search:"USB generations explained"
+},
+
+{
+name:"USB Flash Drive",
+icon:"💽",
+category:"Storage",
+what:"A USB flash drive is a small removable storage device based on flash memory.",
+where:"Connected externally through a USB port.",
+how:"NAND flash memory stores data electronically while a controller manages the device.",
+history:"USB flash drives became popular as small removable alternatives to floppy disks and optical media.",
+current:"Flash drives are available in many capacities and USB interface generations.",
+future:"Higher capacities and faster flash controllers will continue improving portable storage.",
+facts:["Portable storage","Uses flash memory","Small and removable"],
+youtube:"how USB flash drive works",
+search:"USB flash drive NAND explained"
+},
+
+{
+name:"External Hard Drive",
+icon:"🧳",
+category:"Storage",
+what:"An external hard drive is a storage drive enclosed in a portable case and connected externally.",
+where:"Outside the computer, typically using USB.",
+how:"The internal HDD or SSD communicates with the computer through a USB storage bridge.",
+history:"External storage evolved from large removable drives into compact portable devices.",
+current:"Portable HDDs remain useful for large low-cost storage while portable SSDs provide greater speed.",
+future:"Portable storage will continue moving toward faster flash-based designs.",
+facts:["External storage","Usually connects through USB","Useful for backups"],
+youtube:"how external hard drives work",
+search:"portable SSD vs HDD explained"
+},
+
+{
+name:"Memory Card",
+icon:"💳",
+category:"Storage",
+what:"SD and microSD cards are removable flash-memory storage devices.",
+where:"Used in cameras, phones, consoles, computers and other devices.",
+how:"Flash memory stores data electronically and a controller manages reading and writing.",
+history:"Memory cards became increasingly popular as portable electronics became smaller.",
+current:"SD and microSD cards are widely used for cameras and portable devices.",
+future:"Higher capacities and faster standards continue to develop.",
+facts:["Removable flash storage","SD and microSD are common formats","Speed classes describe performance"],
+youtube:"how SD card works",
+search:"SD card technology explained"
+},
+
+{
+name:"CMOS Battery",
+icon:"🔋",
+category:"Motherboard",
+what:"The CMOS/RTC battery provides power for maintaining certain firmware settings and real-time clock functionality when the computer is off.",
+where:"Usually mounted directly on the motherboard.",
+how:"A small battery supplies very low electrical power to the relevant clock and configuration circuitry.",
+history:"Battery-backed clock and configuration systems have been used in PCs for decades.",
+current:"Coin-cell batteries are common on desktop motherboards.",
+future:"Motherboard designs may integrate more persistent configuration and alternative low-power solutions.",
+facts:["Usually a coin cell","Supports real-time clock functions","Not the main PC power source"],
+youtube:"CMOS battery explained",
+search:"CMOS battery motherboard explained"
+},
+
+{
+name:"BIOS / UEFI",
+icon:"⚙️",
+category:"Motherboard",
+what:"BIOS and UEFI firmware initializes hardware and begins the computer's boot process.",
+where:"Firmware is stored on a chip attached to the motherboard.",
+how:"Firmware performs hardware initialization and then loads the operating system boot process.",
+history:"Traditional BIOS firmware was gradually supplemented and replaced by UEFI on modern systems.",
+current:"UEFI is the standard firmware environment on most modern PCs.",
+future:"Firmware will continue improving security, hardware initialization and platform management.",
+facts:["Runs before the operating system","Stored in non-volatile memory","UEFI is the modern standard"],
+youtube:"how BIOS UEFI works",
+search:"UEFI BIOS explained"
+},
+
+{
+name:"Chipset",
+icon:"🧩",
+category:"Motherboard",
+what:"The chipset is a group of motherboard controllers that manages communication and platform features.",
+where:"Modern desktop chipsets are generally located on the motherboard as dedicated controller hardware.",
+how:"The platform controller manages selected I/O, storage, USB and expansion-related functions.",
+history:"Older PC architectures used multiple chips such as northbridge and southbridge. Modern CPUs integrate many former chipset functions.",
+current:"Modern platforms have fewer external chipset components because CPUs integrate more functionality.",
+future:"Greater processor integration and faster platform interconnects will continue changing chipset designs.",
+facts:["Controls platform I/O functions","Many functions moved into CPUs","Important for motherboard capabilities"],
+youtube:"what is a motherboard chipset",
+search:"modern chipset explained"
+},
+
+{
+name:"VRM",
+icon:"🔋",
+category:"Power",
+what:"Voltage Regulator Modules convert and regulate power for components such as the CPU.",
+where:"Usually located around the CPU socket on the motherboard.",
+how:"VRM circuits switch and regulate electrical power to provide stable voltages required by processors.",
+history:"As CPUs became more powerful, motherboard power delivery systems became increasingly sophisticated.",
+current:"Modern high-performance motherboards can have elaborate multi-phase power delivery systems.",
+future:"Higher efficiency, better thermal management and precise power control will continue evolving.",
+facts:["Regulates voltage","Important for CPU power","Produces heat"],
+youtube:"VRM motherboard explained",
+search:"CPU VRM explained"
+},
+
+{
+name:"PCIe Slots",
+icon:"🧩",
+category:"Expansion",
+what:"PCI Express slots provide high-speed expansion connections for GPUs, network cards, capture cards and other devices.",
+where:"On the motherboard.",
+how:"PCIe transfers data between the CPU/platform and expansion devices using high-speed serial lanes.",
+history:"PCIe replaced older expansion standards such as PCI and AGP for many applications.",
+current:"PCIe 4.0 and PCIe 5.0 are widely relevant in modern consumer platforms, with newer generations progressing.",
+future:"Future PCIe generations aim for increasingly higher bandwidth.",
+facts:["Used for GPUs and expansion cards","Uses lanes","Different slot sizes provide different lane configurations"],
+youtube:"how PCIe works",
+search:"PCIe lanes explained"
+},
+
+{
+name:"SATA Ports",
+icon:"🔌",
+category:"Motherboard",
+what:"SATA ports connect compatible storage devices such as SATA SSDs and hard drives.",
+where:"Usually located along the edge of a motherboard.",
+how:"SATA provides a serial connection between the motherboard controller and storage device.",
+history:"SATA replaced older Parallel ATA interfaces for mainstream storage.",
+current:"SATA remains common for HDDs and many 2.5-inch SSDs.",
+future:"NVMe/PCIe storage is increasingly dominant for high performance, while SATA remains useful for capacity-oriented systems.",
+facts:["Connect SATA drives","Uses data cables","Common for HDDs and 2.5-inch SSDs"],
+youtube:"SATA explained",
+search:"SATA interface explained"
+},
+
+{
+name:"M.2 Slots",
+icon:"📐",
+category:"Motherboard",
+what:"M.2 slots provide compact connections for compatible M.2 storage and other modules.",
+where:"Directly on the motherboard.",
+how:"The M.2 connector provides electrical connections for the interface supported by the installed module.",
+history:"M.2 became popular as computers moved toward smaller and faster components.",
+current:"NVMe M.2 SSDs are extremely common.",
+future:"M.2 storage will continue following improvements in PCIe and NAND.",
+facts:["Compact motherboard connector","Commonly used for NVMe SSDs","Compatibility depends on motherboard and drive"],
+youtube:"M.2 motherboard slot explained",
+search:"M.2 slot types explained"
+},
+
+{
+name:"Front Panel",
+icon:"⏻",
+category:"Case",
+what:"The front panel contains physical controls and connectors such as the power button, USB ports and audio jacks.",
+where:"At the front or top of the computer case.",
+how:"Small cables connect the buttons and ports to headers on the motherboard.",
+history:"PC cases have evolved from simple front controls to modern front I/O panels with USB-C and other connections.",
+current:"Many cases include USB-A, USB-C, audio and power/reset controls.",
+future:"Front I/O will increasingly adopt faster USB and improved connectivity.",
+facts:["Contains user-facing case controls","Connects to motherboard headers","USB-C is increasingly common"],
+youtube:"PC case front panel connectors explained",
+search:"front panel motherboard connectors"
+},
+
+{
+name:"Power Cables",
+icon:"🔗",
+category:"Power",
+what:"Power cables deliver electrical power from the PSU to the motherboard, GPU, drives and other components.",
+where:"Inside the computer case.",
+how:"Different connectors deliver appropriate voltages and power levels to specific hardware.",
+history:"PC power connectors evolved as component power requirements changed.",
+current:"Modern systems use standardized motherboard, CPU and GPU power connectors.",
+future:"Power delivery standards will continue adapting to high-performance hardware.",
+facts:["Carry electrical power","Different connectors have different purposes","Cable management improves airflow and appearance"],
+youtube:"PC power cables explained",
+search:"PC PSU cables explained"
+},
+
+{
+name:"UPS",
+icon:"🔌",
+category:"Power",
+what:"An Uninterruptible Power Supply provides backup electrical power during an outage and can help protect connected equipment.",
+where:"Between the wall outlet and computer equipment.",
+how:"A UPS uses a battery and power electronics to maintain output when incoming power fails.",
+history:"UPS systems have long been used to protect computers and critical electronics.",
+current:"Line-interactive and online UPS systems are common categories.",
+future:"Better batteries, efficiency and monitoring will improve UPS technology.",
+facts:["Provides backup power","Useful during power interruptions","Battery capacity determines runtime"],
+youtube:"how UPS works",
+search:"UPS computer power explained"
+},
+
+{
+name:"Surge Protector",
+icon:"🛡️",
+category:"Power",
+what:"A surge protector helps protect electronics from voltage spikes.",
+where:"Usually installed between the wall outlet and connected equipment.",
+how:"Protective components can divert or limit transient overvoltage.",
+history:"Surge protection became increasingly important as electronic devices became more sensitive.",
+current:"Surge protectors are common accessories for desktops and other electronics.",
+future:"Improved protection and monitoring technologies will continue to develop.",
+facts:["Helps against electrical surges","Not the same as a UPS","Protection quality varies"],
+youtube:"how surge protectors work",
+search:"surge protector explained"
+},
+
+{
+name:"Capture Card",
+icon:"📹",
+category:"Expansion",
+what:"A capture card receives video from another device and makes it available to a computer for recording or streaming.",
+where:"Can be installed internally through PCIe or connected externally through USB.",
+how:"It receives a video signal, processes it and transfers frames to software on the computer.",
+history:"Capture hardware evolved alongside video production and game streaming.",
+current:"Capture cards are widely used by streamers, creators and video professionals.",
+future:"Higher resolutions, refresh rates and lower-latency capture will continue developing.",
+facts:["Captures video","Useful for streaming","Can be internal or external"],
+youtube:"how capture cards work",
+search:"capture card explained"
+},
+
+{
+name:"RAID Controller",
+icon:"🗃️",
+category:"Expansion",
+what:"A RAID controller manages multiple storage devices as part of a RAID configuration.",
+where:"May be integrated into a motherboard/platform or installed as a dedicated controller.",
+how:"The controller distributes or mirrors data according to the selected RAID configuration.",
+history:"RAID was developed to improve storage performance, capacity or fault tolerance using multiple drives.",
+current:"Software RAID and hardware-assisted RAID are both used.",
+future:"Storage architectures continue moving toward software-defined management and high-speed NVMe systems.",
+facts:["Can combine multiple drives","Different RAID levels provide different properties","RAID is not a substitute for backups"],
+youtube:"RAID explained",
+search:"RAID levels explained"
+},
+
+{
+name:"TV Tuner Card",
+icon:"📺",
+category:"Expansion",
+what:"A TV tuner receives television broadcast signals and allows compatible software to display or record them.",
+where:"Can be installed as an expansion card or connected externally.",
+how:"The tuner receives and decodes broadcast signals.",
+history:"TV tuner cards became popular when PCs were increasingly used as multimedia centers.",
+current:"Streaming has reduced their mainstream importance, but tuner hardware still exists for specific applications.",
+future:"Broadcast standards and software-defined radio technologies may influence future tuner designs.",
+facts:["Receives broadcast signals","Can enable recording","Compatibility depends on broadcast standards"],
+youtube:"TV tuner card explained",
+search:"PC TV tuner how it works"
+},
+
+{
+name:"Projector",
+icon:"📽️",
+category:"Display",
+what:"A projector creates a large projected image from a video signal.",
+where:"External display device.",
+how:"Light is modulated to create an image that is projected through an optical system.",
+history:"Projector technologies evolved from film projectors to LCD, DLP and laser-based digital systems.",
+current:"Laser projectors are increasingly common in professional and home applications.",
+future:"Higher brightness, contrast, resolution and compact laser systems continue to develop.",
+facts:["Large-format display","Uses optical projection","Can connect to a computer"],
+youtube:"how a projector works",
+search:"DLP LCD projector explained"
+},
+
+{
+name:"Fingerprint Scanner",
+icon:"🖐️",
+category:"Security",
+what:"A fingerprint scanner captures biometric information from a person's fingerprint for authentication.",
+where:"May be integrated into laptops, keyboards, phones or external devices.",
+how:"Sensors capture fingerprint patterns and software compares them with stored biometric templates.",
+history:"Fingerprint identification has existed for a long time, with electronic scanners becoming common in modern devices.",
+current:"Capacitive, optical and other sensor technologies are used.",
+future:"Improved sensors and secure biometric processing will continue to evolve.",
+facts:["Biometric input","Used for authentication","Stores biometric representations rather than ordinary passwords"],
+youtube:"how fingerprint scanners work",
+search:"fingerprint sensor explained"
+},
+
+{
+name:"Barcode Scanner",
+icon:"▦",
+category:"Input",
+what:"A barcode scanner reads encoded visual patterns and converts them into digital data.",
+where:"External device commonly used at retail, inventory and logistics stations.",
+how:"An optical sensor captures the barcode and software decodes the pattern.",
+history:"Barcode scanning became important for automated retail and inventory systems.",
+current:"Laser and camera-based scanners are widely used.",
+future:"Computer vision and AI-based recognition may increasingly complement traditional barcode scanning.",
+facts:["Input device","Reads encoded patterns","Common in retail and logistics"],
+youtube:"how barcode scanners work",
+search:"barcode scanner explained"
+},
+
+{
+name:"VR Controllers",
+icon:"🥽",
+category:"Gaming",
+what:"VR controllers allow users to interact with virtual environments using tracked hand-held controls.",
+where:"Used externally with a VR headset.",
+how:"Sensors and tracking systems determine controller position, orientation and button inputs.",
+history:"VR input evolved from simple experimental controllers to sophisticated tracked devices.",
+current:"Modern VR systems can track controller movement and provide haptic feedback.",
+future:"Hand tracking, advanced haptics and increasingly natural interfaces are major areas of development.",
+facts:["Tracked 3D input","Often includes haptics","Works with VR systems"],
+youtube:"how VR controllers work",
+search:"VR controller tracking explained"
+},
+
+{
+name:"Fan Controller",
+icon:"🎛️",
+category:"Cooling",
+what:"A fan controller manages the speed and operation of multiple computer fans.",
+where:"May be inside the case, attached to a hub or integrated into a controller.",
+how:"The controller adjusts fan power or PWM signals according to user or temperature settings.",
+history:"Fan control evolved from manual switches to software-controlled PWM systems.",
+current:"Motherboards and dedicated hubs can manage multiple PWM fans.",
+future:"More intelligent automatic thermal control and quieter fan operation will continue developing.",
+facts:["Controls fan speed","Can connect multiple fans","PWM enables precise control"],
+youtube:"PC fan controller explained",
+search:"PWM fan controller explained"
+},
+
+{
+name:"RGB Controller",
+icon:"🌈",
+category:"Accessories",
+what:"An RGB controller manages lighting effects on compatible PC components and accessories.",
+where:"Inside the case or integrated into compatible hardware.",
+how:"The controller sends signals to addressable or non-addressable LEDs.",
+history:"PC lighting evolved from simple LEDs into programmable RGB systems.",
+current:"ARGB lighting allows individual LEDs to display different colors and effects.",
+future:"Lighting systems will increasingly integrate with software, sensors and synchronized ecosystems.",
+facts:["Controls LEDs","ARGB can address individual LEDs","Different RGB standards are not always electrically compatible"],
+youtube:"how PC RGB works",
+search:"ARGB RGB PC lighting explained"
+},
+
+{
+name:"Monitor Cable",
+icon:"🖇️",
+category:"Connectivity",
+what:"Display cables transmit video and sometimes audio from a computer to a monitor.",
+where:"Between the GPU/computer and display.",
+how:"Digital interfaces such as HDMI and DisplayPort transmit encoded video data.",
+history:"Computer video connections evolved from analog VGA and DVI toward modern digital interfaces.",
+current:"HDMI and DisplayPort are widely used.",
+future:"Higher bandwidth standards will support higher resolution, refresh rates and advanced display features.",
+facts:["Carries display data","HDMI and DisplayPort are common","Cable capability matters at high bandwidth"],
+youtube:"HDMI vs DisplayPort explained",
+search:"DisplayPort HDMI explained"
+},
+
+{
+name:"Network Card",
+icon:"🌐",
+category:"Networking",
+what:"A network interface card allows a computer to communicate over a network.",
+where:"Can be integrated into the motherboard or installed as a PCIe expansion card.",
+how:"The NIC converts computer data into network frames and manages the physical/network connection.",
+history:"Network adapters evolved from add-on expansion cards to integrated motherboard controllers.",
+current:"Gigabit and multi-gigabit Ethernet adapters are widely available.",
+future:"Faster Ethernet and more intelligent networking hardware will continue developing.",
+facts:["Provides network connectivity","Can be wired or specialized for other networks","NIC is short for Network Interface Controller/Card"],
+youtube:"how network cards work",
+search:"NIC network interface card explained"
+},
+
+{
+name:"CPU Cache",
+icon:"🚀",
+category:"Memory",
+what:"CPU cache is extremely fast memory located on or very close to the processor that stores frequently needed data and instructions.",
+where:"Inside the CPU package or processor architecture.",
+how:"The processor automatically keeps useful information in cache to reduce the need to access slower main memory.",
+history:"Cache memory became increasingly important as CPU speeds grew faster than main-memory latency.",
+current:"Modern CPUs commonly have multiple levels such as L1, L2 and L3 cache.",
+future:"Larger caches, 3D cache and new memory architectures are active development areas.",
+facts:["Faster than RAM","Usually divided into levels","Reduces memory access latency"],
+youtube:"CPU cache explained",
+search:"L1 L2 L3 cache explained"
+},
+
+{
+name:"Heat Sink",
+icon:"🌡️",
+category:"Cooling",
+what:"A heatsink is a metal structure designed to absorb and spread heat so airflow can remove it.",
+where:"Attached to CPUs, GPUs, chipsets, VRMs and other heat-producing components.",
+how:"Heat moves through a conductive base into fins that increase surface area.",
+history:"Heatsinks became increasingly sophisticated as semiconductor power density increased.",
+current:"Copper bases, aluminum fins and heat pipes are common.",
+future:"New materials and advanced cooling structures may improve thermal performance.",
+facts:["Spreads heat","Increases surface area","Often paired with fans or other cooling systems"],
+youtube:"how heatsinks work",
+search:"computer heatsink explained"
+},
+
+{
+name:"PCIe Expansion Card",
+icon:"🧩",
+category:"Expansion",
+what:"An expansion card adds specialized hardware functionality to a computer.",
+where:"Installed into compatible motherboard expansion slots.",
+how:"The card communicates with the system over an expansion interface such as PCI Express.",
+history:"Expansion cards have been central to PC customization since early personal computers.",
+current:"GPUs, sound cards, network cards and capture cards commonly use PCIe.",
+future:"Higher-bandwidth interfaces will support increasingly powerful expansion devices.",
+facts:["Adds functionality","Uses expansion slots","GPUs are major expansion cards"],
+youtube:"how PCIe expansion cards work",
+search:"PCIe expansion card explained"
+}
+
+];
+
+
+/* =========================================================
+   VARIABLES
+   ========================================================= */
+
+const grid = document.getElementById("partsGrid");
+const searchInput = document.getElementById("search");
+const filters = document.getElementById("filters");
+
+let currentCategory = "All";
+let currentPart = null;
+
+let viewedParts =
+    JSON.parse(localStorage.getItem("technovaViewed") || "[]");
+
+let favorites =
+    JSON.parse(localStorage.getItem("technovaFavorites") || "[]");
+
+
+/* =========================================================
+   INITIALIZATION
+   ========================================================= */
+
+document.getElementById("partsCount").textContent = parts.length;
+
+const categories = [
+    "All",
+    ...new Set(parts.map(part => part.category))
+];
+
+categories.forEach(category => {
+
+    const button = document.createElement("button");
+
+    button.className =
+        "filter" + (category === "All" ? " active" : "");
+
+    button.textContent = category;
+
+    button.onclick = () => {
+
+        currentCategory = category;
+
+        document
+            .querySelectorAll(".filter")
+            .forEach(btn => btn.classList.remove("active"));
+
+        button.classList.add("active");
+
+        renderParts();
+
+    };
+
+    filters.appendChild(button);
+
+});
+
+
+/* =========================================================
+   RENDER PARTS
+   ========================================================= */
+
+function renderParts(){
+
+    const query =
+        searchInput.value.toLowerCase().trim();
+
+    const filtered = parts.filter(part => {
+
+        const matchesCategory =
+            currentCategory === "All" ||
+            part.category === currentCategory;
+
+        const searchable =
+            (
+                part.name +
+                " " +
+                part.category +
+                " " +
+                part.what +
+                " " +
+                part.how
+            ).toLowerCase();
+
+        return matchesCategory &&
+               searchable.includes(query);
+
+    });
+
+
+    grid.innerHTML = "";
+
+    if(filtered.length === 0){
+
+        grid.innerHTML = `
+            <div style="
+                grid-column:1/-1;
+                padding:50px;
+                text-align:center;
+                color:#91a7ba;
+                border:1px solid rgba(94,190,255,.18);
+                border-radius:12px;
+            ">
+                No component found.
+            </div>
+        `;
+
+        return;
+    }
+
+
+    filtered.forEach(part => {
+
+        const card =
+            document.createElement("article");
+
+        card.className = "part-card";
+
+        const viewed =
+            viewedParts.includes(part.name);
+
+        const favorite =
+            favorites.includes(part.name);
+
+        card.innerHTML = `
+
+            <div class="part-icon">
+                ${part.icon}
+            </div>
+
+            <h3>
+                ${part.name}
+            </h3>
+
+            <p>
+                ${part.what}
+            </p>
+
+            <span class="tag">
+                ${part.category}
+            </span>
+
+            ${
+                viewed
+                ? `<span class="tag"
+                    style="color:#42f5a7;margin-left:5px">
+                    ✓ EXPLORED
+                  </span>`
+                : ""
+            }
+
+            ${
+                favorite
+                ? `<span style="
+                    position:absolute;
+                    top:15px;
+                    right:15px;
+                    color:#ffae4a">
+                    ★
+                  </span>`
+                : ""
+            }
+
+        `;
+
+        card.onclick = () => openPart(part);
+
+        grid.appendChild(card);
+
+    });
+
+}
+
+
+/* =========================================================
+   SEARCH
+   ========================================================= */
+
+searchInput.addEventListener(
+    "input",
+    renderParts
+);
+
+
+/* =========================================================
+   OPEN PART
+   ========================================================= */
+
+function openPart(part){
+
+    currentPart = part;
+
+    if(!viewedParts.includes(part.name)){
+
+        viewedParts.push(part.name);
+
+        localStorage.setItem(
+            "technovaViewed",
+            JSON.stringify(viewedParts)
+        );
+
+    }
+
+    document.getElementById("modalIcon").textContent =
+        part.icon;
+
+    document.getElementById("modalTitle").textContent =
+        part.name;
+
+    document.getElementById("modalCategory").textContent =
+        part.category.toUpperCase();
+
+    document.getElementById("modalWhat").textContent =
+        part.what;
+
+    document.getElementById("modalWhere").textContent =
+        part.where;
+
+    document.getElementById("modalHow").textContent =
+        part.how;
+
+    document.getElementById("modalHistory").textContent =
+        part.history;
+
+    document.getElementById("modalCurrent").textContent =
+        part.current;
+
+    document.getElementById("modalFuture").textContent =
+        part.future;
+
+
+    const facts =
+        document.getElementById("modalFacts");
+
+    facts.innerHTML = "";
+
+    part.facts.forEach(fact => {
+
+        const li =
+            document.createElement("li");
+
+        li.textContent = fact;
+
+        facts.appendChild(li);
+
+    });
+
+
+    const youtube =
+        "https://www.youtube.com/results?search_query=" +
+        encodeURIComponent(part.youtube);
+
+    const google =
+        "https://www.google.com/search?q=" +
+        encodeURIComponent(part.search);
+
+
+    document.getElementById("youtubeLink").href =
+        youtube;
+
+    document.getElementById("searchLink").href =
+        google;
+
+
+    updateFavoriteButton();
+
+    document
+        .getElementById("modal")
+        .classList.add("open");
+
+    renderParts();
+
+    updateProgress();
+
+}
+
+
+/* =========================================================
+   CLOSE MODAL
+   ========================================================= */
+
+function closeModal(){
+
+    document
+        .getElementById("modal")
+        .classList.remove("open");
+
+}
+
+
+document
+    .getElementById("modal")
+    .addEventListener("click",event => {
+
+        if(event.target.id === "modal"){
+            closeModal();
+        }
+
+    });
+
+
+document.addEventListener(
+    "keydown",
+    event => {
+
+        if(event.key === "Escape"){
+            closeModal();
+        }
+
+    }
+);
+
+
+/* =========================================================
+   FAVORITES
+   ========================================================= */
+
+document
+    .getElementById("favoriteButton")
+    .onclick = () => {
+
+        if(!currentPart) return;
+
+        const index =
+            favorites.indexOf(currentPart.name);
+
+        if(index === -1){
+
+            favorites.push(currentPart.name);
+
+        }else{
+
+            favorites.splice(index,1);
+
+        }
+
+        localStorage.setItem(
+            "technovaFavorites",
+            JSON.stringify(favorites)
+        );
+
+        updateFavoriteButton();
+
+        renderParts();
+
+    };
+
+
+function updateFavoriteButton(){
+
+    if(!currentPart) return;
+
+    const saved =
+        favorites.includes(currentPart.name);
+
+    document.getElementById(
+        "favoriteButton"
+    ).textContent =
+        saved ? "★ BOOKMARKED" : "☆ BOOKMARK";
+
+}
+
+
+/* =========================================================
+   LEARNING PROGRESS
+   ========================================================= */
+
+function updateProgress(){
+
+    const percentage =
+        Math.round(
+            (viewedParts.length / parts.length) * 100
+        );
+
+    document.getElementById(
+        "progressNumber"
+    ).textContent =
+        percentage + "%";
+
+}
+
+
+/* =========================================================
+   QUIZ DATABASE
+   ========================================================= */
+
+const quizQuestions = [
+
+{
+q:"Which component executes general-purpose program instructions?",
+answers:[
+"RAM",
+"CPU",
+"PSU",
+"SSD"
+],
+correct:1
+},
+
+{
+q:"Which component is primarily designed for highly parallel graphics processing?",
+answers:[
+"GPU",
+"PSU",
+"HDD",
+"CMOS Battery"
+],
+correct:0
+},
+
+{
+q:"Which storage technology uses spinning magnetic platters?",
+answers:[
+"NVMe SSD",
+"HDD",
+"RAM",
+"USB Controller"
+],
+correct:1
+},
+
+{
+q:"What does RAM primarily provide?",
+answers:[
+"Permanent file storage",
+"Temporary working memory",
+"Electrical power",
+"Internet connectivity"
+],
+correct:1
+},
+
+{
+q:"What does a PSU do?",
+answers:[
+"Processes graphics",
+"Stores files",
+"Converts and regulates electrical power",
+"Controls the keyboard"
+],
+correct:2
+},
+
+{
+q:"Where is the CPU normally installed?",
+answers:[
+"Inside the monitor",
+"Into a motherboard socket",
+"Inside the PSU",
+"Inside the keyboard"
+],
+correct:1
+},
+
+{
+q:"Which interface is commonly used by modern NVMe SSDs?",
+answers:[
+"PCIe",
+"VGA",
+"PS/2",
+"Audio Jack"
+],
+correct:0
+},
+
+{
+q:"What is the main job of thermal paste?",
+answers:[
+"Store files",
+"Improve heat transfer",
+"Increase RAM capacity",
+"Provide Wi-Fi"
+],
+correct:1
+},
+
+{
+q:"What does UEFI help do?",
+answers:[
+"Initialize hardware and start the boot process",
+"Print documents",
+"Generate electricity",
+"Cool the CPU"
+],
+correct:0
+},
+
+{
+q:"Which component connects many major PC components together?",
+answers:[
+"Mouse",
+"Motherboard",
+"Speaker",
+"Printer"
+],
+correct:1
+}
+
+];
+
+
+let quizIndex = 0;
+let score = 0;
+
+const questionElement =
+    document.getElementById("quizQuestion");
+
+const answersElement =
+    document.getElementById("answers");
+
+const resultElement =
+    document.getElementById("quizResult");
+
+const nextButton =
+    document.getElementById("nextQuestion");
+
+
+function loadQuiz(){
+
+    if(quizIndex >= quizQuestions.length){
+
+        questionElement.textContent =
+            "MISSION COMPLETE";
+
+        answersElement.innerHTML = "";
+
+        resultElement.textContent =
+            `You scored ${score}/${quizQuestions.length}.`;
+
+        nextButton.style.display = "none";
+
+        return;
+
+    }
+
+
+    const question =
+        quizQuestions[quizIndex];
+
+    questionElement.textContent =
+        `${quizIndex + 1}. ${question.q}`;
+
+    answersElement.innerHTML = "";
+
+    resultElement.textContent = "";
+
+    nextButton.style.display = "none";
+
+
+    question.answers.forEach(
+        (answer,index) => {
+
+            const button =
+                document.createElement("button");
+
+            button.className = "answer";
+
+            button.textContent = answer;
+
+            button.onclick = () =>
+                answerQuiz(button,index);
+
+            answersElement.appendChild(button);
+
+        }
+    );
+
+}
+
+
+function answerQuiz(button,index){
+
+    const question =
+        quizQuestions[quizIndex];
+
+    const all =
+        document.querySelectorAll(".answer");
+
+    all.forEach(btn => btn.disabled = true);
+
+
+    if(index === question.correct){
+
+        button.classList.add("correct");
+
+        resultElement.textContent =
+            "✓ CORRECT — Excellent.";
+
+        score++;
+
+    }else{
+
+        button.classList.add("wrong");
+
+        all[question.correct]
+            .classList.add("correct");
+
+        resultElement.textContent =
+            "✗ Not quite. The highlighted answer is correct.";
+
+    }
+
+    nextButton.style.display = "inline-block";
+
+}
+
+
+nextButton.onclick = () => {
+
+    quizIndex++;
+
+    loadQuiz();
+
+};
+
+
+loadQuiz();
+
+
+/* =========================================================
+   KEYBOARD SHORTCUTS
+   ========================================================= */
+
+document.addEventListener(
+    "keydown",
+    event => {
+
+        if(event.key === "/"){
+
+            event.preventDefault();
+
+            searchInput.focus();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   INITIAL RENDER
+   ========================================================= */
+
+renderParts();
+
+updateProgress();
+
+
+/* =========================================================
+   SIMPLE 3D COMPUTER INTERACTION
+   ========================================================= */
+
+const pc =
+    document.querySelector(".pc");
+
+let mouseX = 0;
+let mouseY = 0;
+
+document.addEventListener(
+    "mousemove",
+    event => {
+
+        if(window.innerWidth < 800) return;
+
+        mouseX =
+            (event.clientX / window.innerWidth - .5) * 10;
+
+        mouseY =
+            (event.clientY / window.innerHeight - .5) * 6;
+
+        pc.style.transform =
+            `
+            rotateY(${-23 + mouseX}deg)
+            rotateX(${8 - mouseY}deg)
+            `;
+
+    }
+);
+
+
+/* =========================================================
+   CONSOLE MESSAGE
+   ========================================================= */
+
+console.log(
+`
+╔══════════════════════════════════════╗
+║       TECHNOVA SYSTEM ONLINE         ║
+║      INSIDE THE COMPUTER             ║
+╠══════════════════════════════════════╣
+║ Components loaded: ${parts.length}
+║ Press "/" to search.
+║ Click any component to learn more.
+╚══════════════════════════════════════╝
+`
+);
+
+</script>
+
+</body>
+</html>
